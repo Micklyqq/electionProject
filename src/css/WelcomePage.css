@@ -1,0 +1,26 @@
+.welcome-page{
+    background-image: url(../assets/img/election-bg.png);
+    background-repeat: no-repeat;
+    /* background-position: center; */
+    background-size: cover;
+    text-align: center;
+    height:100%;
+}
+
+.welcome-page-container{
+    padding-top: 13%;
+}
+
+h1{
+    color: white;
+    font-weight: bold;
+    text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
+}
+
+.my-row{
+    margin: 2% 0%;
+}

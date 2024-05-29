@@ -1,0 +1,14 @@
+.btn-myprimary{
+    background-color: #479F76;
+    color: white;
+    font-weight: bold;
+}
+.btn-myprimary:hover{
+    background-color: #a3cfbb;
+    color: #6c757d;
+    font-weight: bold;
+}
+.btn-xxl {
+      padding: 3rem 1.5rem;
+      font-size: 1.5rem;
+    }

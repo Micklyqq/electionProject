@@ -8,6 +8,8 @@ import WelcomePage from './routes/WelcomePage';
 import {createBrowserRouter,RouterProvider} from 'react-router-dom';
 import AuthPage from './routes/AuthPage';
 import RegPage from './routes/RegPage';
+import MainPage from './routes/MainPage';
+import ELectionPage from './routes/ElectionPage';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
   {
     path:"/reg",
     element:<RegPage/>
+  },
+  {
+    path:"/main",
+    element:<MainPage/>
+  },
+  {
+    path:"/election",
+    element:<ELectionPage/>
   },
   
 ])

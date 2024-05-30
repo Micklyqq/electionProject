@@ -1,6 +1,6 @@
 import { Image, Button, Container,Row,Col} from "react-bootstrap"
 import "../css/WelcomePage.css"
-import "../css/MyButtons.css"
+import "../css/MyStyles.css"
 import belFlag from "../assets/img/bel-flag.png"
 import {useNavigate} from 'react-router-dom';
 
@@ -15,7 +15,7 @@ export default function WelcomePage(){
       </Col>
     </Row>
     <Row className="my-row">
-      <Col ><h1>Добро пожаловать на сайт, посвященный выборам в Республике Беларусь</h1></Col> 
+      <Col ><h1 className="welcome-header">Добро пожаловать на сайт, посвященный выборам в Республике Беларусь</h1></Col> 
     </Row>
     <Row className="my-row">
       <Col ></Col>

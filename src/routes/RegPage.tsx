@@ -1,10 +1,13 @@
-import { Button, Form, } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, } from "react-bootstrap";
 import "../css/RegPage.css"
-import "../css/MyButtons.css"
+import "../css/MyStyles.css"
 export default function RegPage(){
  return (
-    <>
     <div className="reg-page">
+      <Container>
+         <Row>
+            <Col></Col>
+            <Col md={6}>
       <Form className="reg-form">
          <Form.Group className="mb-3">
             <Form.Label>Email adress</Form.Label>
@@ -32,7 +35,10 @@ export default function RegPage(){
          <Button variant="myprimary" type="submit" className="mt-3">Зарегистрироваться</Button>
          </div>
       </Form>
+      </Col>
+      <Col></Col>
+      </Row>
+      </Container>
     </div>
-    </>
  )   
 }

@@ -1,4 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
+const ApiError = require('../error/ApiError')
+
 class DatabaseInteraction{
     constructor(){
         this.db = this.openDb();
@@ -13,7 +15,7 @@ openDb() {
 });
  }
 
- closeDb(){
+closeDb(){
    this.db.close((err)=>{
     if(err){
         return console.error(err.message)
@@ -25,12 +27,12 @@ openDb() {
 initDb(){
     const usersSql = `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
-        email TEXT,
-        password TEXT,
-        passportID TEXT,
-        regionID INTEGER,
+        email TEXT NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL,
+        regionID INTEGER NOT NULL,
         FOREIGN KEY (regionID) REFERENCES regions (id)
-        UNIQUE (email, passportID)
+        UNIQUE (email)
     );`;
     const regionsSql = `CREATE TABLE IF NOT EXISTS regions (
         id INTEGER PRIMARY KEY,
@@ -38,7 +40,8 @@ initDb(){
     );`;
     const electionsSql = `CREATE TABLE IF NOT EXISTS elections (
         id INTEGER PRIMARY KEY,
-        title TEXT, description TEXT,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
         regionID INTEGER,
         winnerID INTEGER,
         FOREIGN KEY (regionID) REFERENCES regions (id),
@@ -46,11 +49,11 @@ initDb(){
     );`;
     const candidatesSql = `CREATE TABLE IF NOT EXISTS candidates (
         id INTEGER PRIMARY KEY,
-        fullname TEXT,
+        fullname TEXT NOT NULL,
         party TEXT,
         description TEXT,
-        votes INTEGER,
-        electionID INTEGER,
+        votes INTEGER DEFAULT 0,
+        electionID INTEGER NOT NULL,
         FOREIGN KEY (electionID) REFERENCES elections (id)
     );`;
 
@@ -75,7 +78,92 @@ initDb(){
             throw err;
         }
     })
+
 }
+    getOneRow = async(table,rowID)=>{
+                const sql = `SELECT * FROM ${table} WHERE id = ?;`;
+            const election = await new Promise((resolve,reject)=>{
+                this.db.get(sql,[rowID],(err,row)=>{
+                    if(err){
+                     return reject(ApiError.internal("Ошибка сервера"));
+                    }
+                    else{
+                        resolve(row);
+                    }
+                })
+            })
+            return election;
+    }
+
+    deleteRow = async (table,rowID) => {
+    if (!rowID) {
+        throw (ApiError.badRequest("Не представлен id"));
+    }
+
+
+        const election = await new Promise((resolve, reject) => {
+            const sqlCheck = `SELECT * FROM ${table} WHERE id = ?`;
+            this.db.get(sqlCheck, [rowID], (err, row) => {
+                if (err) {
+                return  reject(ApiError.internal("Ошибка сервера, попробуйте еще раз"));
+                } else {
+                    resolve(row);
+                }
+            });
+        });
+
+        if (!election) {
+            throw (ApiError.badRequest("Запись с указанным id не найдена"));
+        }
+
+        await new Promise((resolve, reject) => {
+            const sqlDel = `DELETE FROM ${table} WHERE id = ?`;
+            this.db.run(sqlDel, [rowID], (err) => {
+                if (err) {
+                    return reject(ApiError.internal("Ошибка сервера, попробуйте еще раз"));
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        return "Данные успешно удалены"; 
 }
 
+updateRow = async(table,rowID,column,value)=>{
+    
+    if (!rowID) {
+        throw (ApiError.badRequest("Не представлен id"));
+    }
+
+
+        const row = await new Promise((resolve, reject) => {
+            const sqlCheck = `SELECT * FROM ${table} WHERE id = ?`;
+            this.db.get(sqlCheck, [rowID], (err, row) => {
+                if (err) {
+                return reject(ApiError.internal("Ошибка сервера, попробуйте еще раз"));
+                } else {
+                    resolve(row);
+                }
+            });
+        });
+
+        if (!row) {
+            throw (ApiError.badRequest("Запись с указанным id не найдена"));
+        }
+
+        await new Promise((resolve, reject) => {
+            const sqlDel = `UPDATE ${table} SET ${column} = ${value} WHERE id = ?`;
+            this.db.run(sqlDel, [rowID], (err) => {
+                if (err) {
+                    return reject(ApiError.internal("Ошибка сервера, попробуйте еще раз"));
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        return "Данные успешно изменены"; 
+}
+}
 module.exports = DatabaseInteraction;

@@ -1,5 +1,5 @@
 
-import { Col, Container, Image, Nav, Navbar, Row } from "react-bootstrap";
+import { Container, Image, Nav, Navbar } from "react-bootstrap";
 import BelFlag from "../assets/img/bel-flag.png"
 import { useNavigate } from "react-router-dom";
 export default function NavigationBar(){

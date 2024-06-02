@@ -10,7 +10,9 @@ import AuthPage from './routes/AuthPage';
 import RegPage from './routes/RegPage';
 import MainPage from './routes/MainPage';
 import ELectionPage from './routes/ElectionPage';
-
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import DataLoader from './components/DataLoader';
 const router = createBrowserRouter([
   {
     path:"/",
@@ -41,10 +43,17 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+
+
 root.render(
   <React.StrictMode>
-  <RouterProvider router={router}/>
+  <Provider store={store}>
+      <DataLoader/>
+      <RouterProvider router={router}/>
+  </Provider>
+
   </React.StrictMode>
+  
 );
 
 // If you want to start measuring performance in your app, pass a function

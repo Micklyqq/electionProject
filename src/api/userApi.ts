@@ -1,3 +1,4 @@
+import { User } from "../redux/slices/userSlice";
 import { $authHost, $host } from "./index";
 import { jwtDecode } from "jwt-decode";
 
@@ -7,7 +8,8 @@ export const registration = async (email:string, password:string,regionID:number
     password,
     regionID
   });
-  return data;
+ localStorage.setItem("token",data.token) 
+ return jwtDecode(data.token) as User;
 //   localStorage.setItem("token", data.token);
 //   return jwtDecode(data.token);
 };

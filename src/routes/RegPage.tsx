@@ -3,17 +3,34 @@ import "../css/RegPage.css"
 import "../css/MyStyles.css"
 import { registration } from "../api/userApi";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { Region } from "../redux/slices/regionSlice";
+import { User, loadUser } from "../redux/slices/userSlice";
+import {} from 'jwt-decode';
+import { useNavigate } from "react-router-dom";
+
 export default function RegPage(){
  const [email,setEmail] = useState('');
  const [password,setPassword] = useState('');
- const [regionID,setRegionID] = useState(0);
+ const [regionName,setRegionName] = useState('Витебская область');
  const [response,setResponse] = useState('');
- const regButtonHandler = async()=>{
+ const regions = useSelector((state:RootState)=>state.regions.value);
+const dispatch = useDispatch();
+const user = useSelector((state:RootState)=>state.users.value);
+    const navigate = useNavigate();
+ async function regButtonHandler(){ 
    try{
-      if(email && password && regionID){
+      if(email && password && regionName && regions.length>0){
+        const regionID = regions.find((obj:Region)=>obj.name=== regionName); 
+        if(regionID){
 
-      const response = await registration(email,password,regionID);
-      setResponse(response);
+      const data:User=  await registration(email,password,regionID?.id);
+         if(data.id!==undefined){
+            dispatch(loadUser(data));
+            navigate("/main");
+         }
+        }
       }
       else{
       setResponse("Все поля должны быть заполнены!");         
@@ -23,6 +40,8 @@ export default function RegPage(){
       console.log(error);
    }
  }
+
+
  return (
     <div className="reg-page">
       <Container>
@@ -40,7 +59,7 @@ export default function RegPage(){
          </Form.Group>
          <Form.Group>
             <Form.Label>Выберите область</Form.Label>
-         <Form.Select>
+         <Form.Select onChange={(e)=>setRegionName(e.target.value)}>
             <option value={"Витебская область"}>Витебская область</option>
             <option value={"Могилёвская область"}>Могилёвская область</option>
             <option value={"Гомельская область"}>Гомельская область</option>
@@ -49,7 +68,7 @@ export default function RegPage(){
          </Form.Select>
          </Form.Group>
          <div className="d-grid">
-         <Button variant="myprimary" type="submit" className="mt-3">Зарегистрироваться</Button>
+         <Button variant="myprimary" onClick={regButtonHandler} className="mt-3">Зарегистрироваться</Button>
          </div>
       </Form>
       </Col>

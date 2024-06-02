@@ -27,6 +27,7 @@ throw err;
 
 class UserController{
     
+    
         checkUserExist = (database,email)=>{ 
        return new Promise((resolve,reject)=>{
         const checkRegSql = `SELECT * FROM users WHERE email = ?;`
@@ -72,12 +73,19 @@ class UserController{
             if(err){
                 res.json({message:"Произошла непредвиденная ошибка"});
             }
-            else{
-                res.json({message:"Регистрация успешна!"})
-            }
-        });
         
+        });
+
+        const regUser = await this.checkUserExist(database,email);
+        if(regUser){
         database.closeDb();
+        const token = generateJWT(regUser.id,regUser.email,regUser.role,regUser.regionID);
+        return res.json({token})
+        }
+        else{
+            database.closeDb();
+            res.json({message:"Получение данных пользователя провалилось"})
+        }
         
     }
 

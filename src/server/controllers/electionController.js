@@ -13,14 +13,17 @@ class ElectionController{
             `INSERT INTO elections (title,description,regionID,date) VALUES(?,?,?,?);`
         );
         stmt.run(title,description,regionID,date);
-        stmt.finalize((err)=>{
+        stmt.finalize(function(err){
             if(err){
                 return next(ApiError.internal("Ошибка сервера"));
             }
-            else{
-                res.json({message:"Выборный процесс создан"})
-                database.closeDb();
+        })
+        const sql = `SELECT * FROM elections WHERE ROWID = LAST_INSERT_ROWID();`;
+        database.db.get(sql,(err,row)=>{
+            if(err){
+                return err;
             }
+            return res.json(row);
         })
     }
 
@@ -113,6 +116,66 @@ selectWinner = async (req,res,next)=>{
     catch(error){
         database.closeDb();
         next(error);
+    }
+}
+
+vote = async(req,res,next)=>{
+    const {userID,electionID,candidateID} = req.body;
+
+        const database = new databaseInteraction();
+        const userVote= database.db.prepare(
+            `INSERT INTO user_vote(userID,electionID,candidateID) VALUES(?,?,?);`
+        );
+        const candidate = await database.getOneRow('candidates',candidateID);
+        console.log(candidate)
+        if(candidate){
+        await database.updateRow('candidates',candidateID,'votes',candidate.votes+1);  
+        }
+
+        userVote.run(userID,electionID,candidateID);
+        userVote.finalize((err)=>{
+            if(err){
+                return next(ApiError.internal("Ошибка сервера"));
+            }
+            else{
+                res.json({message:"Голосование успешно!"})
+                database.closeDb();
+            }
+        })
+    
+}
+
+getUserVote = async(req,res,next)=>{
+const { userID, electionID } = req.query;
+
+    if (!userID || !electionID) {
+        return next(ApiError.badRequest("Отсутствуют значения в параметрах"));
+    }
+
+    const database = new databaseInteraction();
+    const sql = `SELECT * FROM user_vote WHERE userID=? AND electionID=?`;
+
+    try {
+        const data = await new Promise((resolve, reject) => {
+            database.db.get(sql, [userID, electionID], (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row);
+                }
+            });
+        });
+
+        if (data) {
+            database.closeDb()
+            return res.json(data);
+        } else {
+            database.closeDb();
+            return res.json({});
+        }
+    } catch (err) {
+        database.closeDb();
+        return next(ApiError.internal("Ошибка сервера"));
     }
 }
 }

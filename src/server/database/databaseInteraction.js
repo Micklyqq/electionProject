@@ -58,6 +58,18 @@ initDb(){
         FOREIGN KEY (electionID) REFERENCES elections (id)
     );`;
 
+    const user_vote = `
+    CREATE TABLE IF NOT EXISTS user_vote (
+        id INTEGER PRIMARY KEY,
+        userID INTEGER,
+        electionID INTEGER,
+        candidateID INTEGER,
+        FOREIGN KEY (userID) REFERENCES users (id),
+        FOREIGN KEY (electionID) REFERENCES elections (id),
+        FOREIGN KEY (candidateID) REFERENCES candidates (id)
+    );
+    `
+
     
     this.db.all(regionsSql,(err)=>{
         if(err){
@@ -79,6 +91,12 @@ initDb(){
             throw err;
         }
     })
+
+    this.db.run(user_vote,(err)=>{
+        if(err){
+            throw err;
+        }
+    });
 
 }
     getOneRow = async(table,rowID)=>{

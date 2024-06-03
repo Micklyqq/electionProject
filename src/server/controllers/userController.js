@@ -2,7 +2,8 @@ const ApiError = require('../error/ApiError')
 const dbInteraction = require('../database/databaseInteraction')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const env = require('../env')
+const env = require('../env');
+const DatabaseInteraction = require('../database/databaseInteraction');
 const generateJWT= (id,email,role,regionID) => {
 try{
 
@@ -95,7 +96,7 @@ class UserController{
       const database = new dbInteraction(); 
         const user = await this.checkUserExist(database,email);
         if(!user){
-           return next(ApiError.badRequest("Пользователя с таким email не существует")); 
+           return next(ApiError.badRequest("Неверный email")); 
         }
         const comparedPassword = bcrypt.compareSync(password,user.password);
         if(!comparedPassword){
@@ -129,11 +130,14 @@ class UserController{
 
     async check(req, res, next) {
     try {
+        const database = new DatabaseInteraction();
+        const user = await database.getOneRow('users',req.user.id);
+        console.log(user)
       const token = generateJWT(
-        req.user.id,
-        req.user.email,
-        req.user.role,
-        req.user.regionID
+        user.id,
+        user.email,
+        user.role,
+        user.regionID
       );
       return res.json({ token });
     } catch (e) {

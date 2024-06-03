@@ -7,5 +7,6 @@ router.get("/winner/:id",electionController.selectWinner);
 router.get("/getAll/:regionID",electionController.getAllElections);
 router.get("/getOne/:id",electionController.getElection);
 router.delete("/:id",electionController.deleteElection);
-
+router.post("/vote",electionController.vote);
+router.get("/getVote",electionController.getUserVote);
 module.exports = router;

@@ -1,4 +1,4 @@
-import { Button, Col, Container, Form, Row, } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, Row, } from "react-bootstrap";
 import "../css/RegPage.css"
 import "../css/MyStyles.css"
 import { registration } from "../api/userApi";
@@ -16,9 +16,10 @@ export default function RegPage(){
  const [password,setPassword] = useState('');
  const [regionID,setRegionID] = useState(1);
  const [response,setResponse] = useState('');
+ const [error,setError] = useState(false);
 const dispatch = useDispatch();
 const user = useSelector((state:RootState)=>state.users.value);
-    const navigate = useNavigate();
+const navigate = useNavigate();
 
 if(localStorage.getItem("token")){
          return <Navigate to='/main'/>  
@@ -36,6 +37,8 @@ if(localStorage.getItem("token")){
       }
       else{
       setResponse("Все поля должны быть заполнены!");         
+      setError(true);
+      setTimeout(()=>setError(false),5000);
       }
    }
    catch(error){
@@ -65,16 +68,12 @@ if(localStorage.getItem("token")){
             {regions.map(item=>(
                <option value={item.id}>{item.name}</option>
             ))}
-            {/* <option value={"Витебская область"}>Витебская область</option>
-            <option value={"Могилёвская область"}>Могилёвская область</option>
-            <option value={"Гомельская область"}>Гомельская область</option>
-            <option value={"Минская область"}>Минская область</option>
-            <option value={"Бресткая область"}>Брестская область</option> */}
          </Form.Select>
          </Form.Group>
          <div className="d-grid">
          <Button variant="myprimary" onClick={regButtonHandler} className="mt-3">Зарегистрироваться</Button>
          </div>
+         <Alert className="mt-3" variant="danger" style={{display:error?'block':'none'}}>{response}</Alert>
       </Form>
       </Col>
       <Col></Col>

@@ -5,8 +5,38 @@ import bosinka from "../assets/img/bosinka.png"
 import maslak from "../assets/img/maslak.png"
 import podnebes from "../assets/img/podnebes.png"
 import "../css/MyStyles.css"
-import "../css/ElectionPage.css" 
+import "../css/ElectionPage.css"
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getOneElection } from "../api/electionApi";
+import { Election } from "../interfaces/Election";
+import { getAllCandidates } from "../api/candidateApi";
+import { Candidate } from "../interfaces/Candidate";
+
 export default function ELectionPage(){
+   const {id} = useParams<{id:string}>(); 
+    const [election,setElection] = useState<Election>(Object)
+    const [candidates,setCandidates] = useState<Candidate[]>([]);
+    useEffect(() => {
+    const fetch = async()=>{
+    try{
+        const data = await getOneElection(Number(id));
+        const candidate:Candidate[] = await getAllCandidates(Number(id));
+        if(data.id){
+            setElection(data);
+        }
+        if(candidate.length>0){
+            setCandidates(candidate);
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+    }  
+    
+    fetch();
+    }, [])
+    
     return(
         <>
         <NavigationBar/>
@@ -14,7 +44,7 @@ export default function ELectionPage(){
       <Container className="mt-5">
        <Row>
         <Col>
-       <h1>Выборы в городскую думу Витебска</h1> 
+       <h1>{election.title}</h1> 
         </Col>
         </Row> 
         <Row className="mt-3">
@@ -25,7 +55,7 @@ export default function ELectionPage(){
         <Row>
             <Col md={1}></Col>
             <Col className="elect-description mt-3">
-            <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?</p>
+            <p>{election.description}</p>
             </Col>
             <Col md={2}></Col>
         </Row>
@@ -40,36 +70,20 @@ export default function ELectionPage(){
             </Col>
         </Row>
         <Row className="mt-3">
-            <Col>
+        {candidates.map(item=>(
+            <Col className="mt-3">
             <Card style={{width:"18rem"}}>
            <Card.Img src={bosinka}/>
             <Card.Body>
-                <Card.Title>Босин Боська Олегович</Card.Title>
-                <Card.Text>Директор №2 г.Витебска</Card.Text>
+                <Card.Title>{item.fullname}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">Партия: {item.party}</Card.Subtitle>
+                <Card.Subtitle className="mb-2 text-muted">Голоса: {item.votes}</Card.Subtitle>
+                <Card.Text>{item.description}</Card.Text>
                 <Button variant="myprimary">Проголосовать</Button>
             </Card.Body>
             </Card>
             </Col>
-            <Col>
-            <Card style={{width:"18rem"}}>
-           <Card.Img src={maslak}/>
-            <Card.Body>
-                <Card.Title>Маслаков Ванька Ваномасович</Card.Title>
-                <Card.Text>Директор №2 г.Витебска</Card.Text>
-                <Button variant="myprimary">Проголосовать</Button>
-            </Card.Body>
-            </Card>
-            </Col>
-            <Col>
-            <Card style={{width:"18rem"}}>
-           <Card.Img src={podnebes}/>
-            <Card.Body>
-                <Card.Title>Поднебесный Алексей Инцелович</Card.Title>
-                <Card.Text>Директор №2 г.Витебска</Card.Text>
-                <Button variant="myprimary">Проголосовать</Button>
-            </Card.Body>
-            </Card>
-            </Col>
+        ))}
         </Row>
         </Container>  
     </div>

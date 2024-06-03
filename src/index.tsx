@@ -13,8 +13,8 @@ import ELectionPage from './routes/ElectionPage';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import DataLoader from './components/DataLoader';
-const router = createBrowserRouter([
-  {
+import PrivateRoute from './routes/PrivateRoute';
+const router = createBrowserRouter([ {
     path:"/",
     element:<WelcomePage/>
   },
@@ -30,11 +30,11 @@ const router = createBrowserRouter([
   },
   {
     path:"/main",
-    element:<MainPage/>
+    element:<PrivateRoute element={<MainPage/>}/>
   },
   {
-    path:"/election",
-    element:<ELectionPage/>
+    path:"/election/:id",
+    element:<PrivateRoute element={<ELectionPage/>}/>
   },
   
 ])

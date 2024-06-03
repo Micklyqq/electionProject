@@ -15,9 +15,9 @@ export default function NavigationBar(){
                     <Navbar.Brand href="/main">Выборы   <Image rounded src={BelFlag} style={{maxWidth:"15%"}}></Image></Navbar.Brand>
                     <Nav className="me-auto" >
                         <Nav.Link onClick={()=>navigate("/main")}>Главная</Nav.Link>
-                        <Nav.Link>О сайте</Nav.Link>
                         <Nav.Link>Профиль</Nav.Link>
-                        <Nav.Link onClick={()=>exit()} >Выход</Nav.Link>
+                        <Nav.Link>О сайте</Nav.Link>
+                        <Nav.Link style={{marginLeft:"30vw"}} onClick={()=>exit()} >Выход</Nav.Link>
                     </Nav>
                     </Container>
             </Navbar>

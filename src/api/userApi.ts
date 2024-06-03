@@ -24,8 +24,9 @@ export const check = async () => {
   try {
     const { data } = await $authHost.get("api/user/checkAuth");
     localStorage.setItem("token", data.token);
-    return jwtDecode(data.token);
+    return jwtDecode(data.token) as User;
   } catch (e) {
+    localStorage.removeItem('token');
     return false;
   }
 };

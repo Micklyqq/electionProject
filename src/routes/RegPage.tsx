@@ -8,28 +8,30 @@ import { RootState } from "../redux/store";
 import { Region } from "../redux/slices/regionSlice";
 import { User, loadUser } from "../redux/slices/userSlice";
 import {} from 'jwt-decode';
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function RegPage(){
+  const regions = useSelector((state:RootState)=>state.regions.value);
  const [email,setEmail] = useState('');
  const [password,setPassword] = useState('');
- const [regionName,setRegionName] = useState('Витебская область');
+ const [regionID,setRegionID] = useState(1);
  const [response,setResponse] = useState('');
- const regions = useSelector((state:RootState)=>state.regions.value);
 const dispatch = useDispatch();
 const user = useSelector((state:RootState)=>state.users.value);
     const navigate = useNavigate();
+
+if(localStorage.getItem("token")){
+         return <Navigate to='/main'/>  
+  }
+
  async function regButtonHandler(){ 
    try{
-      if(email && password && regionName && regions.length>0){
-        const regionID = regions.find((obj:Region)=>obj.name=== regionName); 
-        if(regionID){
+      if(email && password && regionID && regions.length>0){
 
-      const data:User=  await registration(email,password,regionID?.id);
+      const data:User=  await registration(email,password,regionID);
          if(data.id!==undefined){
             dispatch(loadUser(data));
             navigate("/main");
-         }
         }
       }
       else{
@@ -59,12 +61,15 @@ const user = useSelector((state:RootState)=>state.users.value);
          </Form.Group>
          <Form.Group>
             <Form.Label>Выберите область</Form.Label>
-         <Form.Select onChange={(e)=>setRegionName(e.target.value)}>
-            <option value={"Витебская область"}>Витебская область</option>
+         <Form.Select onChange={(e)=>setRegionID(Number(e.target.value))}>
+            {regions.map(item=>(
+               <option value={item.id}>{item.name}</option>
+            ))}
+            {/* <option value={"Витебская область"}>Витебская область</option>
             <option value={"Могилёвская область"}>Могилёвская область</option>
             <option value={"Гомельская область"}>Гомельская область</option>
             <option value={"Минская область"}>Минская область</option>
-            <option value={"Бресткая область"}>Брестская область</option>
+            <option value={"Бресткая область"}>Брестская область</option> */}
          </Form.Select>
          </Form.Group>
          <div className="d-grid">

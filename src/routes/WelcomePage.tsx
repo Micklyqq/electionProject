@@ -3,9 +3,13 @@ import "../css/WelcomePage.css"
 import "../css/MyStyles.css"
 import belFlag from "../assets/img/bel-flag.png"
 import {useNavigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 export default function WelcomePage(){
   const navigate = useNavigate();
+  if(localStorage.getItem("token")){
+  return <Navigate to='/main'/>  
+  }
   return(
    <div className="welcome-page">
    <Container className="welcome-page-container" fluid>

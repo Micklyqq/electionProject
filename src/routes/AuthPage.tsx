@@ -1,7 +1,13 @@
 import { Form,Button, Container, Row, Col } from "react-bootstrap";
 import "../css/AuthPage.css"
+import { Navigate } from 'react-router-dom';
 
 export default function AuthPage(){
+
+        if(localStorage.getItem("token")){
+  return <Navigate to='/main'/>  
+  }
+
    return(
     <div className="auth-page">
       <Container className="auth-container">

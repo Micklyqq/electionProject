@@ -44,6 +44,7 @@ initDb(){
         description TEXT NOT NULL,
         regionID INTEGER,
         winnerID INTEGER,
+        date TEXT NOT NULL,
         FOREIGN KEY (regionID) REFERENCES regions (id),
         FOREIGN KEY (winnerID) REFERENCES candidates (id)
     );`;

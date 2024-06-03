@@ -4,15 +4,15 @@ const { error } = require("console");
 class ElectionController{
 
     create = async (req,res,next)=>{
-        const {title,description,regionID} = req.body;
-        if(!title || !description || !regionID){
+        const {title,description,regionID,date} = req.body;
+        if(!title || !description || !regionID || !date){
             return next(ApiError.badRequest("Нужно заполнить все поля"));
         }
         const database = new databaseInteraction();
         const stmt = database.db.prepare(
-            `INSERT INTO elections (title,description,regionID) VALUES(?,?,?);`
+            `INSERT INTO elections (title,description,regionID,date) VALUES(?,?,?,?);`
         );
-        stmt.run(title,description,regionID);
+        stmt.run(title,description,regionID,date);
         stmt.finalize((err)=>{
             if(err){
                 return next(ApiError.internal("Ошибка сервера"));

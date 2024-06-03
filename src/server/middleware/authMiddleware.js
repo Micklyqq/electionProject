@@ -1,3 +1,4 @@
+const env = require("../env");
 const ApiError = require("../error/ApiError")
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +13,7 @@ module.exports = function (req,res,next){
         if(!token){
               next(ApiError.unauthorized("Не авторизован"))
         }
-        const decoded = jwt.verify(token,process.env.SECRET_KEY);
+        const decoded = jwt.verify(token,env.jwtKey);
         req.user = decoded;
         next();
     }

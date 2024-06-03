@@ -2,6 +2,7 @@ const ApiError = require('../error/ApiError')
 const dbInteraction = require('../database/databaseInteraction')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const env = require('../env')
 const generateJWT= (id,email,role,regionID) => {
 try{
 
@@ -12,8 +13,8 @@ const payload = {
     regionID
 }
 
-const token = jwt.sign(payload,"secret",{
-    expiresIn:"24h",
+const token = jwt.sign(payload,env.jwtKey,{
+    expiresIn:"30d",
 }) 
 return token;
 
@@ -125,6 +126,21 @@ class UserController{
             }
         })
     }
+
+    async check(req, res, next) {
+    try {
+      const token = generateJWT(
+        req.user.id,
+        req.user.email,
+        req.user.role,
+        req.user.regionID
+      );
+      return res.json({ token });
+    } catch (e) {
+      res.json({ message: e });
+    }
+  }
+
 }
 
 module.exports = new UserController();
